@@ -5,6 +5,3 @@ edition = "2021"
 
 [dependencies]
 gl = "0.14.0"
-
-[lib]
-path = "lib.rs"
