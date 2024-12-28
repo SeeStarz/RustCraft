@@ -1,0 +1,14 @@
+[workspace]
+members = ["gl_lib"]
+
+[package]
+name = "rustcraft"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+gl_lib = { path = "gl_lib" }
+cgmath = "0.18.0"
+gl = "0.14.0"
+glfw = "0.59.0"
+image = "0.25.5"
