@@ -312,6 +312,7 @@ dependencies = [
 name = "gl_lib"
 version = "0.1.0"
 dependencies = [
+ "cgmath",
  "gl",
 ]
 
