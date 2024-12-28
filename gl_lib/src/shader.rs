@@ -220,6 +220,7 @@ fn create_shader(source: &CStr, shader_type: ShaderType) -> Result<u32, String> 
             ptr::null_mut() as *mut GLsizei,
             info_log.as_mut_ptr() as *mut GLchar,
         );
+        info_log.set_len((info_length - 1) as usize);
 
         gl::DeleteShader(id);
         assert_eq!(gl::NO_ERROR, gl::GetError());
