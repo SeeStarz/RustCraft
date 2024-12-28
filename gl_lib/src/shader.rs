@@ -11,6 +11,7 @@ pub trait Shader: private::Sealed {
 
     /// # Safety
     /// Make sure id is a valid OpenGL shader of the correct type
+    /// Shader struct represents a valid compiled OpenGL shader
     unsafe fn from_id(id: u32) -> Self
     where
         Self: Sized;
@@ -171,10 +172,10 @@ fn create_shader(source: &CStr, shader_type: ShaderType) -> Result<u32, String> 
         // Reset any error beforehand
         gl::GetError();
 
-        // Create shader object
+        // Create shader object on the GPU
         let id = gl::CreateShader(shader_type.to_opengl());
         if id == 0 {
-            panic!("Unable to create shader object");
+            return Err(String::from("OpenGL failed to create shader object"));
         }
 
         // Send data to the GPU
@@ -189,11 +190,7 @@ fn create_shader(source: &CStr, shader_type: ShaderType) -> Result<u32, String> 
 
         // Check if compilation succeed
         let mut status = 0;
-        gl::GetShaderiv(
-            id as GLuint,
-            gl::COMPILE_STATUS as GLenum,
-            &mut status as *mut GLint,
-        );
+        gl::GetShaderiv(id as GLuint, gl::COMPILE_STATUS, &mut status as *mut GLint);
 
         // No error
         if status as GLboolean == gl::TRUE {
@@ -204,11 +201,12 @@ fn create_shader(source: &CStr, shader_type: ShaderType) -> Result<u32, String> 
         let mut info_length = 0;
         gl::GetShaderiv(
             id as GLuint,
-            gl::INFO_LOG_LENGTH as GLenum,
+            gl::INFO_LOG_LENGTH,
             &mut info_length as *mut GLint,
         );
 
         if info_length == 0 {
+            gl::DeleteShader(id);
             assert_eq!(gl::NO_ERROR, gl::GetError());
             return Err(format!(
                 "Failed to compile {shader_type}, no info log available."
@@ -223,9 +221,10 @@ fn create_shader(source: &CStr, shader_type: ShaderType) -> Result<u32, String> 
             info_log.as_mut_ptr() as *mut GLchar,
         );
 
+        gl::DeleteShader(id);
         assert_eq!(gl::NO_ERROR, gl::GetError());
-        if let Ok(str) = String::from_utf8(info_log) {
-            Err(format!("Failed to compile {shader_type}: {str}"))
+        if let Ok(string) = String::from_utf8(info_log) {
+            Err(format!("Failed to compile {shader_type}: {string}"))
         } else {
             Err(format!(
                 "Failed to compile {shader_type}, info log cannot be parsed to UTF-8."
