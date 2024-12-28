@@ -12,9 +12,9 @@ pub struct Program {
 
 impl Program {
     pub fn new(
-        vertex_shader: VertexShader,
-        fragment_shader: FragmentShader,
-        geometry_shader: Option<GeometryShader>,
+        vertex_shader: &VertexShader,
+        fragment_shader: &FragmentShader,
+        geometry_shader: Option<&GeometryShader>,
     ) -> Result<Program, String> {
         unsafe {
             // Reset any error beforehand
