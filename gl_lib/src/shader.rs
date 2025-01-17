@@ -1,13 +1,30 @@
 use gl::types::*;
-use std::ffi::CStr;
+use std::ffi::{CStr, CString};
 use std::fmt;
+use std::fs::read_to_string;
 use std::ops::Drop;
+use std::path::Path;
 use std::ptr;
 
 pub trait Shader: private::Sealed {
     fn from_cstr(source: &CStr) -> Result<Self, String>
     where
         Self: Sized;
+
+    fn from_path(path: &Path) -> Result<Self, String>
+    where
+        Self: Sized,
+    {
+        if let Ok(string) = read_to_string(path) {
+            if let Ok(source) = CString::new(string) {
+                Shader::from_cstr(&source)
+            } else {
+                Err(String::from("Invalid null byte found"))
+            }
+        } else {
+            Err(String::from("Failed to read file"))
+        }
+    }
 
     /// # Safety
     /// Make sure id is a valid OpenGL shader of the correct type
