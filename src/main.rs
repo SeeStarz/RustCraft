@@ -1,8 +1,8 @@
 use gl::types::*;
 use gl_lib::Shader;
 use std::{
-    ffi::{c_void, CStr},
-    path::Path,
+    ffi::c_void,
+    path::{Path, PathBuf},
     ptr,
 };
 
@@ -11,31 +11,6 @@ use glfw::{Action, Context, Key};
 // settings
 const SCREEN_WIDTH: u32 = 800;
 const SCREEN_HEIGHT: u32 = 600;
-
-// shader code
-const VERTEX_SHADER: &CStr = cr#"
-#version 330 core
-layout (location = 0) in vec3 inPos;
-layout (location = 1) in vec2 inTexCoord;
-out vec2 texCoord;
-
-void main() {
-    gl_Position = vec4(inPos.xyz, 1.0f);
-    texCoord = inTexCoord;
-}
-"#;
-
-const FRAGMENT_SHADER: &CStr = cr#"
-#version 330 core
-out vec4 FragColor;
-in vec2 texCoord;
-
-uniform sampler2D boxTexture;
-
-void main() {
-    FragColor = texture(boxTexture, texCoord);
-}
-"#;
 
 fn main() {
     // glfw initialization
@@ -130,8 +105,10 @@ fn main() {
             vao
         };
 
-        let vertex_shader = gl_lib::VertexShader::from_cstr(VERTEX_SHADER).unwrap();
-        let fragment_shader = gl_lib::FragmentShader::from_cstr(FRAGMENT_SHADER).unwrap();
+        let vertex_shader =
+            gl_lib::VertexShader::from_path(&PathBuf::from("asset/shader.vert")).unwrap();
+        let fragment_shader =
+            gl_lib::FragmentShader::from_path(&PathBuf::from("asset/shader.frag")).unwrap();
 
         let program = gl_lib::Program::new(&vertex_shader, &fragment_shader, None).unwrap();
 
