@@ -1,5 +1,5 @@
 use gl::types::*;
-use gl_lib::Shader;
+use gl_lib::{Shader, VertexBufferObject};
 use std::{
     ffi::c_void,
     path::{Path, PathBuf},
@@ -60,15 +60,11 @@ fn main() {
             gl::GenVertexArrays(1, &mut vao);
             gl::BindVertexArray(vao);
 
-            let mut vbo = 0;
-            gl::GenBuffers(1, &mut vbo);
-            gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
-            gl::BufferData(
-                gl::ARRAY_BUFFER,
-                size_of_val(&vertices) as GLsizeiptr,
-                vertices.as_ptr() as *const c_void,
-                gl::STATIC_DRAW,
+            let vbo = Box::new(
+                VertexBufferObject::<f32>::new(&vertices, None).expect("Failed to create buffer"),
             );
+            gl::BindBuffer(gl::ARRAY_BUFFER, vbo.get_id());
+            Box::leak(vbo);
 
             gl::VertexAttribPointer(
                 0,
