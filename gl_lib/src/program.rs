@@ -198,9 +198,13 @@ impl Program {
     }
 
     /// # Safety
-    /// Ensure the program remains valid (linked successfully)
-    /// If attaching any shader, make sure to detach afterwards
-    pub unsafe fn get_id(&self) -> u32 {
+    /// Make sure id is a valid linked OpenGL Program object.
+    /// Don't use another Program's id as Program has its own destructor.
+    pub unsafe fn from_id(id: u32) -> Program {
+        Program { id }
+    }
+
+    pub fn get_id(&self) -> u32 {
         self.id
     }
 

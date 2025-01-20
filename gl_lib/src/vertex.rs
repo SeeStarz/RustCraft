@@ -68,6 +68,8 @@ impl<T> VertexBufferObject<T> {
         })
     }
 
+    /// # Safety
+    /// Make id is a valid Vertex Buffer Object class with correct data layout.
     pub unsafe fn from_id(id: u32) -> VertexBufferObject<T> {
         VertexBufferObject {
             id,
@@ -75,7 +77,7 @@ impl<T> VertexBufferObject<T> {
         }
     }
 
-    pub unsafe fn get_id(&self) -> u32 {
+    pub fn get_id(&self) -> u32 {
         self.id
     }
 }

@@ -27,15 +27,14 @@ pub trait Shader: private::Sealed {
     }
 
     /// # Safety
-    /// Make sure id is a valid OpenGL shader of the correct type
-    /// Shader struct represents a valid compiled OpenGL shader
+    /// Make sure id is a valid OpenGL shader of the correct type.
+    /// Shader struct represents a valid compiled OpenGL shader.
+    /// Don't use another Shader's id as Shader has its own destructor.
     unsafe fn from_id(id: u32) -> Self
     where
         Self: Sized;
 
-    /// # Safety
-    /// Do not delete the shader, it will automatically get deleted when it's dropped
-    unsafe fn get_id(&self) -> u32;
+    fn get_id(&self) -> u32;
 }
 
 pub struct VertexShader {
@@ -71,7 +70,7 @@ impl Shader for VertexShader {
     unsafe fn from_id(id: u32) -> Self {
         VertexShader { id }
     }
-    unsafe fn get_id(&self) -> u32 {
+    fn get_id(&self) -> u32 {
         self.id
     }
 }
@@ -87,7 +86,7 @@ impl Shader for TessControlShader {
     unsafe fn from_id(id: u32) -> Self {
         TessControlShader { id }
     }
-    unsafe fn get_id(&self) -> u32 {
+    fn get_id(&self) -> u32 {
         self.id
     }
 }
@@ -103,7 +102,7 @@ impl Shader for TessEvaluationShader {
     unsafe fn from_id(id: u32) -> Self {
         TessEvaluationShader { id }
     }
-    unsafe fn get_id(&self) -> u32 {
+    fn get_id(&self) -> u32 {
         self.id
     }
 }
@@ -119,7 +118,7 @@ impl Shader for GeometryShader {
     unsafe fn from_id(id: u32) -> Self {
         GeometryShader { id }
     }
-    unsafe fn get_id(&self) -> u32 {
+    fn get_id(&self) -> u32 {
         self.id
     }
 }
@@ -135,7 +134,7 @@ impl Shader for FragmentShader {
     unsafe fn from_id(id: u32) -> Self {
         FragmentShader { id }
     }
-    unsafe fn get_id(&self) -> u32 {
+    fn get_id(&self) -> u32 {
         self.id
     }
 }
